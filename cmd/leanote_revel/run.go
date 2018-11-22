@@ -8,7 +8,7 @@ import (
 	"go/build"
 	"strconv"
 
-	"github.com/leanote/leanote/cmd/harness"
+	"github.com/admpub/leanote/cmd/harness"
 	"github.com/revel/revel"
 )
 

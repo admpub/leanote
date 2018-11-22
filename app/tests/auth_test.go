@@ -1,10 +1,10 @@
 package tests
 
 import (
-	"github.com/leanote/leanote/app/db"
+	"github.com/admpub/leanote/app/db"
 	"testing"
-	//	. "github.com/leanote/leanote/app/lea"
-	"github.com/leanote/leanote/app/service"
+	//	. "github.com/admpub/leanote/app/lea"
+	"github.com/admpub/leanote/app/service"
 	//	"gopkg.in/mgo.v2"
 	//	"fmt"
 )
