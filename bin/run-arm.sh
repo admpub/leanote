@@ -3,7 +3,7 @@ SCRIPTPATH=$(cd "$(dirname "$0")"; pwd)
 
 # set link
 
-path="$SCRIPTPATH/src/github.com/leanote"
+path="$SCRIPTPATH/src/github.com/admpub"
 if [ ! -d "$path" ]; then
 	mkdir -p "$path"
 fi
