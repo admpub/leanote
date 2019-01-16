@@ -3,11 +3,14 @@ package api
 import (
 	"github.com/revel/revel"
 	"gopkg.in/mgo.v2/bson"
+
 	//	"encoding/json"
+	"os"
+
 	"github.com/admpub/leanote/app/controllers"
 	"github.com/admpub/leanote/app/info"
 	. "github.com/admpub/leanote/app/lea"
-	"os"
+
 	//	"fmt"
 	"io/ioutil"
 	//	"fmt"
@@ -88,6 +91,7 @@ func (c ApiBaseContrller) uploadAttach(name string, noteId string) (ok bool, msg
 	dir := revel.BasePath + "/" + filePath
 	err := os.MkdirAll(dir, 0755)
 	if err != nil {
+		msg = err.Error()
 		return
 	}
 	// 生成新的文件名
@@ -97,6 +101,7 @@ func (c ApiBaseContrller) uploadAttach(name string, noteId string) (ok bool, msg
 	toPath := dir + "/" + filename
 	err = ioutil.WriteFile(toPath, data, 0777)
 	if err != nil {
+		msg = err.Error()
 		return
 	}
 
@@ -151,6 +156,7 @@ func (c ApiBaseContrller) upload(name string, noteId string, isAttach bool) (ok 
 	dir := revel.BasePath + "/" + fileUrlPath
 	err := os.MkdirAll(dir, 0755)
 	if err != nil {
+		msg = err.Error()
 		return
 	}
 	// 生成新的文件名
@@ -181,6 +187,7 @@ func (c ApiBaseContrller) upload(name string, noteId string, isAttach bool) (ok 
 	toPath := dir + "/" + filename
 	err = ioutil.WriteFile(toPath, data, 0777)
 	if err != nil {
+		msg = err.Error()
 		return
 	}
 	// 改变成gif图片
