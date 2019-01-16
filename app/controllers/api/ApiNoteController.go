@@ -3,14 +3,16 @@ package api
 import (
 	"github.com/revel/revel"
 	//	"encoding/json"
+	"os"
+	"os/exec"
+
 	"github.com/admpub/leanote/app/info"
 	. "github.com/admpub/leanote/app/lea"
 	"gopkg.in/mgo.v2/bson"
-	"os"
-	"os/exec"
+
 	// "strings"
-	"time"
 	"regexp"
+	"time"
 	//	"github.com/admpub/leanote/app/types"
 	//	"io/ioutil"
 	//	"fmt"
@@ -168,22 +170,22 @@ func (c ApiNote) fixPostNotecontent(noteOrContent *info.ApiNote) {
 				if !file.IsAttach {
 					// <img src="https://"
 					// ![](http://demo.leanote.top/api/file/getImage?fileId=5863219465b68e4fd5000001)
-					reg, _ := regexp.Compile(`https*://[^/]*?/api/file/getImage\?fileId=`+file.LocalFileId)
+					reg, _ := regexp.Compile(`https*://[^/]*?/api/file/getImage\?fileId=` + file.LocalFileId)
 					// Log(reg)
-					noteOrContent.Content = reg.ReplaceAllString(noteOrContent.Content, `/api/file/getImage?fileId=`+file.FileId)  
+					noteOrContent.Content = reg.ReplaceAllString(noteOrContent.Content, `/api/file/getImage?fileId=`+file.FileId)
 
 					// // "http://a.com/api/file/getImage?fileId=localId" => /api/file/getImage?fileId=serverId
-					// noteOrContent.Content = strings.Replace(noteOrContent.Content, 
-					// 	baseUrl + "/api/file/getImage?fileId="+file.LocalFileId, 
+					// noteOrContent.Content = strings.Replace(noteOrContent.Content,
+					// 	baseUrl + "/api/file/getImage?fileId="+file.LocalFileId,
 					// 	"/api/file/getImage?fileId="+file.FileId, -1)
 				} else {
-					reg, _ := regexp.Compile(`https*://[^/]*?/api/file/getAttach\?fileId=`+file.LocalFileId)
+					reg, _ := regexp.Compile(`https*://[^/]*?/api/file/getAttach\?fileId=` + file.LocalFileId)
 					// Log(reg)
-					noteOrContent.Content = reg.ReplaceAllString(noteOrContent.Content, `/api/file/getAttach?fileId=`+file.FileId)  
+					noteOrContent.Content = reg.ReplaceAllString(noteOrContent.Content, `/api/file/getAttach?fileId=`+file.FileId)
 					/*
-					noteOrContent.Content = strings.Replace(noteOrContent.Content, 
-						baseUrl + "/api/file/getAttach?fileId="+file.LocalFileId, 
-						"/api/file/getAttach?fileId="+file.FileId, -1)
+						noteOrContent.Content = strings.Replace(noteOrContent.Content,
+							baseUrl + "/api/file/getAttach?fileId="+file.LocalFileId,
+							"/api/file/getAttach?fileId="+file.FileId, -1)
 					*/
 				}
 			}
@@ -255,7 +257,7 @@ func (c ApiNote) AddNote(noteOrContent info.ApiNote) revel.Result {
 						if msg != "" {
 							Log(msg)
 							Log(file.LocalFileId)
-							re.Msg = "fileUploadError"
+							re.Msg = "fileUploadError: " + msg
 						}
 						// 报不是图片的错误没关系, 证明客户端传来非图片的数据
 						if msg != "notImage" {
