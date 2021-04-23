@@ -6,6 +6,34 @@
     brew tap mongodb/brew
     brew install mongodb-community@4.4
     ```
+    
+    ### 安装信息：
+
+    配置文件：/usr/local/etc/mongod.conf
+    日志文件路径：/usr/local/var/log/mongodb
+    数据存放路径：/usr/local/var/mongodb
+
+    ### 运行 MongoDB
+
+    我们可以使用 brew 命令或 mongod 命令来启动服务。
+
+    brew 启动：
+    ```
+    brew services start mongodb-community@4.4
+    ```
+    brew 停止：
+    ```
+    brew services stop mongodb-community@4.4
+    ```
+    mongod 命令后台进程方式：
+    ```
+    mongod --config /usr/local/etc/mongod.conf --fork
+    ```
+    这种方式启动要关闭可以进入 mongo shell 控制台来实现：
+    ```
+    > db.adminCommand({ "shutdown" : 1 })
+    ```
+
     然后导入初始数据。  
     导入方法参考本文后面“安装”章节中的“导入初始数据”
 
