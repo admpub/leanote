@@ -2,13 +2,14 @@ package i18n
 
 import (
 	"fmt"
-	"github.com/revel/revel"
-	"github.com/robfig/config"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
 	. "github.com/admpub/leanote/app/lea"
+	"github.com/revel/revel"
+	"github.com/robfig/config"
 )
 
 const (
@@ -152,7 +153,7 @@ func loadMessageFile(locale string, path string, info os.FileInfo, osError error
 				messages[locale] = config
 			}
 
-			Logf("Successfully loaded messages from file", info.Name())
+			Logf("Successfully loaded messages from file %v", info.Name())
 		}
 	} else {
 		Logf("Ignoring file %s because it did not have a valid extension", info.Name())

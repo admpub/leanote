@@ -19,7 +19,7 @@
 ```
 $> revel run github.com/admpub/leanote dev [port]
 如:
-$> revel run github.com/admpub/leanote dev 9000
+$> revel run github.com/admpub/leanote dev 9100
 ```
 ### 以生产模式运行Leanote:
 ```
@@ -27,6 +27,8 @@ $> revel run github.com/admpub/leanote prod [port]
 如:
 $> revel run github.com/admpub/leanote prod 8080
 ```
+**端口号必须与配置文件 conf/app.conf 中的port值保持一致**
+
 注意, 以开发模式运行Leanote笔记主页使用的view是note-dev.html, 以生产模式运行Leanote笔记主页使用的view是note.html.
 使用eclipse开发Leanote
 
