@@ -1,5 +1,10 @@
 运行Leanote
 
+首先运行
+```
+go get -u github.com/revel/cmd/revel
+```
+
 以开发模式运行Leanote:
 
 $> revel run github.com/admpub/leanote dev [port]
@@ -27,7 +32,12 @@ $> revel run github.com/admpub/leanote prod 8080
 Leanote前端通过gulp编译, 请在leanote根目录下执行:
 
 $> npm install
-$> gulp
+$> npm run gulp
+
+或者
+
+$> yarn install
+$> yarn gulp
 
 在此之前你可能需要安装nodejs, gulp.
 

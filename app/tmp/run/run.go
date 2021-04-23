@@ -18,7 +18,10 @@ import (
 	_ "github.com/admpub/leanote/app/lea/i18n"
 	_ "github.com/admpub/leanote/app/service"
 	_ "github.com/admpub/leanote/app/tests"
+	tests "github.com/admpub/leanote/tests"
 	controllers0 "github.com/revel/modules/static/app/controllers"
+	_ "github.com/revel/revel"
+	_ "github.com/revel/revel/cache"
 	"github.com/revel/revel/testing"
 )
 
@@ -2294,7 +2297,26 @@ func Register() {
 				},
 			},
 			&revel.MethodType{
+				Name: "ServeDir",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "prefix", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "filepath", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
 				Name: "ServeModule",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "moduleName", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "prefix", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "filepath", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "ServeModuleDir",
 				Args: []*revel.MethodArg{ 
 					&revel.MethodArg{Name: "moduleName", Type: reflect.TypeOf((*string)(nil)) },
 					&revel.MethodArg{Name: "prefix", Type: reflect.TypeOf((*string)(nil)) },
@@ -2309,5 +2331,6 @@ func Register() {
 	revel.DefaultValidationKeys = map[string]map[int]string{ 
 	}
 	testing.TestSuites = []interface{}{ 
+		(*tests.AppTest)(nil),
 	}
 }

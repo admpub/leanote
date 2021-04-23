@@ -2,6 +2,10 @@
   "name": "leanote-front-end-builder",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "preinstall": "npx npm-force-resolutions",
+    "build": "gulp"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.1",
@@ -21,5 +25,8 @@
   },
   "dependencies": {
     "gulp-minify-css": "^1.2.4"
+  },
+  "resolutions": {
+    "graceful-fs": "4.2.3"
   }
 }
