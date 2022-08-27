@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/leanote/leanote/app/info"
+	"github.com/admpub/leanote/app/info"
 )
 
 // admin 首页

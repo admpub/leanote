@@ -10,8 +10,8 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 
-	"github.com/leanote/leanote/app/info"
-	. "github.com/leanote/leanote/app/lea"
+	"github.com/admpub/leanote/app/info"
+	. "github.com/admpub/leanote/app/lea"
 )
 
 type QiniuService struct {

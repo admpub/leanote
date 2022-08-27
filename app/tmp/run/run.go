@@ -278,6 +278,14 @@ func Register() {
 				},
 			},
 			&revel.MethodType{
+				Name: "Cates",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "userIdOrEmail", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
 				Name: "Cate",
 				Args: []*revel.MethodArg{ 
 					&revel.MethodArg{Name: "userIdOrEmail", Type: reflect.TypeOf((*string)(nil)) },
@@ -317,6 +325,22 @@ func Register() {
 				Args: []*revel.MethodArg{ 
 					&revel.MethodArg{Name: "userIdOrEmail", Type: reflect.TypeOf((*string)(nil)) },
 					&revel.MethodArg{Name: "keywords", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "RSS",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "userIdOrEmail", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "SiteMap",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "userIdOrEmail", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
 				},
@@ -424,6 +448,60 @@ func Register() {
 				RenderArgNames: map[int][]string{ 
 					45: []string{ 
 					},
+				},
+			},
+			
+		})
+	
+	revel.RegisterController((*controllers.Cloud)(nil),
+		[]*revel.MethodType{
+			&revel.MethodType{
+				Name: "GetImages",
+				Args: []*revel.MethodArg{ 
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "GenUpToken",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "albumName", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "RenameAlbum",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "curName", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "newName", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "DeleteAlbum",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "albumId", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "DeleteImage",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "key", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "UpdateImageTitle",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "old", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "new", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
 				},
 			},
 			
@@ -809,6 +887,22 @@ func Register() {
 					&revel.MethodArg{Name: "notebookId", Type: reflect.TypeOf((*string)(nil)) },
 					&revel.MethodArg{Name: "year", Type: reflect.TypeOf((*int)(nil)) },
 					&revel.MethodArg{Name: "month", Type: reflect.TypeOf((*int)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "Cates",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "userIdOrEmail", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "RSS",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "userIdOrEmail", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
 				},
@@ -1513,6 +1607,20 @@ func Register() {
 					&revel.MethodArg{Name: "uploadAvatarSize", Type: reflect.TypeOf((*float64)(nil)) },
 					&revel.MethodArg{Name: "uploadBlogLogoSize", Type: reflect.TypeOf((*float64)(nil)) },
 					&revel.MethodArg{Name: "uploadAttachSize", Type: reflect.TypeOf((*float64)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "UploadImageBed",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "accessKey", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "area", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "bucket", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "cloudName", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "domainName", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "saveKey", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "secretKey", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
 				},

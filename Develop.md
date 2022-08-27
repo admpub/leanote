@@ -85,13 +85,13 @@ $> yarn gulp
 
 1. 导入初始数据
 
-    leanote初始数据存放在 `$GOPATH/src/github.com/  admpub/leanote/mongodb_backup/    leanote_install_data` 中。
+    leanote初始数据存放在 `$GOPATH/src/github.com/admpub/leanote/mongodb_backup/leanote_install_data` 中。
 
     打开终端， 输入以下命令导入数据。
     ```
-    $> mongorestore -h localhost -d leanote --dir   $GOPATH/src/github.com/admpub/leanote/    mongodb_backup/leanote_install_data
+    $> mongorestore -h localhost -d leanote --dir $GOPATH/src/github.com/admpub/leanote/mongodb_backup/leanote_install_data
     ```
-    现在在mongodb中已经新建了leanote数据库, 可用命令查看    下leanote有多少张"表":
+    现在在mongodb中已经新建了leanote数据库, 可用命令查看下leanote有多少张"表":
     ```
     $> mongo
     > show dbs #　查看数据库
