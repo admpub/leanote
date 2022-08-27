@@ -1,11 +1,14 @@
 package admin
 
 import (
+	"github.com/admpub/leanote/app/service"
 	"github.com/revel/revel"
+
 	//	. "github.com/admpub/leanote/app/lea"
 	"fmt"
-	"github.com/admpub/leanote/app/info"
 	"strings"
+
+	"github.com/leanote/leanote/app/info"
 )
 
 // admin 首页
@@ -49,28 +52,30 @@ func (c AdminSetting) ShareNote(registerSharedUserId string,
 // demo
 // blog标签设置
 func (c AdminSetting) Demo() revel.Result {
-	c.ViewArgs["demoUsername"] = configService.GetGlobalStringConfig("demoUsername")
-	c.ViewArgs["demoPassword"] = configService.GetGlobalStringConfig("demoPassword")
-	return c.RenderTemplate("admin/setting/demo.html")
+	// c.ViewArgs["demoUsername"] = configService.GetGlobalStringConfig("demoUsername")
+	// c.ViewArgs["demoPassword"] = configService.GetGlobalStringConfig("demoPassword")
+	// return c.RenderTemplate("admin/setting/demo.html")
+	return c.RenderJSON(info.Re{Ok: false, Msg: "Forbidden!"})
 }
 func (c AdminSetting) DoDemo(demoUsername, demoPassword string) revel.Result {
-	re := info.NewRe()
+	return c.Demo()
+	// re := info.NewRe()
 
-	userInfo, err := authService.Login(demoUsername, demoPassword)
-	if err != nil {
-		fmt.Println(err)
-		return c.RenderJSON(info.Re{Ok: false})
-	}
-	if userInfo.UserId == "" {
-		re.Msg = "The User is Not Exists"
-		return c.RenderJSON(re)
-	}
+	// userInfo, err := authService.Login(demoUsername, demoPassword)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return c.RenderJSON(info.Re{Ok: false})
+	// }
+	// if userInfo.UserId == "" {
+	// 	re.Msg = "The User is Not Exists"
+	// 	return c.RenderJSON(re)
+	// }
 
-	re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "demoUserId", userInfo.UserId.Hex())
-	re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "demoUsername", demoUsername)
-	re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "demoPassword", demoPassword)
+	// re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "demoUserId", userInfo.UserId.Hex())
+	// re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "demoUsername", demoUsername)
+	// re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "demoPassword", demoPassword)
 
-	return c.RenderJSON(re)
+	// return c.RenderJSON(re)
 }
 
 func (c AdminSetting) ExportPdf(path string) revel.Result {
@@ -138,5 +143,21 @@ func (c AdminSetting) UploadSize(uploadImageSize, uploadAvatarSize, uploadBlogLo
 	re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "uploadAvatarSize", fmt.Sprintf("%v", uploadAvatarSize))
 	re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "uploadBlogLogoSize", fmt.Sprintf("%v", uploadBlogLogoSize))
 	re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "uploadAttachSize", fmt.Sprintf("%v", uploadAttachSize))
+	re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "ImageBedType", "Local")
+	return c.RenderJSON(re)
+}
+
+func (c AdminSetting) UploadImageBed(accessKey, area, bucket, cloudName, domainName, saveKey, secretKey string) revel.Result {
+	re := info.NewRe()
+	if saveKey == "" {
+		saveKey = "$(etag).$(ext)"
+	}
+	m := map[string]string{"AccessKey": accessKey, "Area": area, "Bucket": bucket, "DomainName": domainName, "SaveKey": saveKey, "SecretKey": secretKey}
+	re.Ok = configService.UpdateGlobalStringConfig(c.GetUserId(), "ImageBedType", cloudName)
+	re.Ok = configService.UpdateGlobalMapConfig(c.GetUserId(), "Cloud_"+cloudName, m)
+
+	if re.Ok {
+		service.ChangeCloud()
+	}
 	return c.RenderJSON(re)
 }

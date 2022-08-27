@@ -24,9 +24,11 @@ var userService, UserS *UserService
 var groupService, GroupS *GroupService
 var tagService, TagS *TagService
 var blogService, BlogS *BlogService
+var staticBlogService, StaticBlogS *StaticBlogService
 var tokenService, TokenS *TokenService
 var noteImageService, NoteImageS *NoteImageService
 var fileService, FileS *FileService
+var cloudService, CloudS CloudService // 接口类型
 var albumService, AlbumS *AlbumService
 var attachService, AttachS *AttachService
 var configService, ConfigS *ConfigService
@@ -49,6 +51,7 @@ func InitService() {
 	GroupS = &GroupService{}
 	TagS = &TagService{}
 	BlogS = &BlogService{}
+	StaticBlogS = &StaticBlogService{}
 	TokenS = &TokenService{}
 	NoteImageS = &NoteImageService{}
 	FileS = &FileService{}
@@ -72,6 +75,7 @@ func InitService() {
 	groupService = GroupS
 	tagService = TagS
 	blogService = BlogS
+	staticBlogService = StaticBlogS
 	tokenService = TokenS
 	noteImageService = NoteImageS
 	fileService = FileS

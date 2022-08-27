@@ -1,13 +1,14 @@
 package service
 
 import (
-	"github.com/admpub/leanote/app/db"
-	"github.com/admpub/leanote/app/info"
-	. "github.com/admpub/leanote/app/lea"
-	"gopkg.in/mgo.v2/bson"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/leanote/leanote/app/db"
+	"github.com/leanote/leanote/app/info"
+	. "github.com/leanote/leanote/app/lea"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type NoteService struct {
@@ -83,7 +84,7 @@ func (this *NoteService) GetNoteBySrc(src, userId string) (note info.Note) {
 
 func (this *NoteService) GetNoteAndContentBySrc(src, userId string) (noteId string, noteAndContent info.NoteAndContentSep) {
 	note := this.GetNoteBySrc(src, userId)
-	if (note.NoteId != "") {
+	if note.NoteId != "" {
 		noteId = note.NoteId.Hex()
 		noteContent := this.GetNoteContent(note.NoteId.Hex(), userId)
 		return noteId, info.NoteAndContentSep{note, noteContent}
@@ -134,6 +135,7 @@ func (this *NoteService) ToApiNote(note *info.Note, files []info.NoteFile) info.
 		UserId:      note.UserId.Hex(),
 		Title:       note.Title,
 		Tags:        note.Tags,
+		Cates:       note.Cates,
 		IsMarkdown:  note.IsMarkdown,
 		IsBlog:      note.IsBlog,
 		IsTrash:     note.IsTrash,
@@ -202,6 +204,7 @@ func (this *NoteService) ListNotes(userId, notebookId string,
 	if isBlog {
 		query["IsBlog"] = true
 	}
+
 	if notebookId != "" {
 		query["NotebookId"] = bson.ObjectIdHex(notebookId)
 	}
@@ -211,7 +214,7 @@ func (this *NoteService) ListNotes(userId, notebookId string,
 	// 总记录数
 	count, _ = q.Count()
 
-	q.Sort(sortFieldR).
+	q.Sort(sortFieldR...).
 		Skip(skipNum).
 		Limit(pageSize).
 		All(&notes)
@@ -228,7 +231,7 @@ func (this *NoteService) ListNotesByNoteIdsWithPageSort(noteIds []bson.ObjectId,
 	// 不是trash
 	db.Notes.
 		Find(bson.M{"_id": bson.M{"$in": noteIds}, "IsTrash": false}).
-		Sort(sortFieldR).
+		Sort(sortFieldR...).
 		Skip(skipNum).
 		Limit(pageSize).
 		All(&notes)
@@ -288,6 +291,9 @@ func (this *NoteService) AddNote(note info.Note, fromApi bool) info.Note {
 
 	notebookId := note.NotebookId.Hex()
 
+	// 添加Note的分类信息
+	note.Cates = notebookService.GetNotebookIdsAndTitles(notebookId, note.UserId.Hex())
+
 	// api会传IsBlog, web不会传
 	if !fromApi {
 		// 设为blog
@@ -303,7 +309,7 @@ func (this *NoteService) AddNote(note info.Note, fromApi bool) info.Note {
 	tagService.AddTags(note.UserId.Hex(), note.Tags)
 
 	// recount notebooks' notes number
-	notebookService.ReCountNotebookNumberNotes(notebookId)
+	notebookService.ReCountNotebookNumberNotes(note.UserId.Hex(), notebookId)
 
 	return note
 }
@@ -445,13 +451,13 @@ func (this *NoteService) UpdateNote(updatedUserId, noteId string, needUpdate bso
 	}
 
 	/*
-	// 这里不再判断, 因为controller已经判断了, 删除附件会新增, 所以不用判断
-	if usn > 0 && note.Usn != usn {
-		Log("有冲突!!")
-		Log(note.Usn)
-		Log(usn)
-		return false, "conflict", 0
-	}
+		// 这里不再判断, 因为controller已经判断了, 删除附件会新增, 所以不用判断
+		if usn > 0 && note.Usn != usn {
+			Log("有冲突!!")
+			Log(note.Usn)
+			Log(usn)
+			return false, "conflict", 0
+		}
 	*/
 
 	// 是否已自定义
@@ -525,8 +531,7 @@ func (this *NoteService) UpdateNote(updatedUserId, noteId string, needUpdate bso
 	if notebookIdI != nil {
 		notebookId := notebookIdI.(bson.ObjectId)
 		if notebookId != "" {
-			notebookService.ReCountNotebookNumberNotes(note.NotebookId.Hex())
-			notebookService.ReCountNotebookNumberNotes(notebookId.Hex())
+			notebookService.ReCountNotebookNumberNotes(userId, notebookId.Hex(), note.NotebookId.Hex())
 			hasRecount = true
 		}
 	}
@@ -539,7 +544,7 @@ func (this *NoteService) UpdateNote(updatedUserId, noteId string, needUpdate bso
 			shareService.DeleteShareNoteAll(noteId, userId)
 		}
 		if !hasRecount {
-			notebookService.ReCountNotebookNumberNotes(note.NotebookId.Hex())
+			notebookService.ReCountNotebookNumberNotes(userId, note.NotebookId.Hex())
 		}
 	}
 
@@ -650,9 +655,6 @@ func (this *NoteService) UpdateTags(noteId string, userId string, tags []string)
 
 func (this *NoteService) ToBlog(userId, noteId string, isBlog, isTop bool) bool {
 	noteUpdate := bson.M{}
-	if isTop {
-		isBlog = true
-	}
 	if !isBlog {
 		isTop = false
 	}
@@ -688,17 +690,18 @@ func (this *NoteService) MoveNote(noteId, notebookId, userId string) info.Note {
 			bson.M{"$set": bson.M{"IsTrash": false,
 				"NotebookId": bson.ObjectIdHex(notebookId),
 				"Usn":        userService.IncrUsn(userId),
+				"Cates":      notebookService.GetNotebookIdsAndTitles(notebookId, userId), // 更新Note的分类信息
 			}})
 
 		if re {
 			// 更新blog状态
 			this.updateToNotebookBlog(noteId, notebookId, userId)
 
-			// recount notebooks' notes number
-			notebookService.ReCountNotebookNumberNotes(notebookId)
 			// 之前不是trash才统计, trash本不在统计中的
 			if !note.IsTrash && preNotebookId != notebookId {
-				notebookService.ReCountNotebookNumberNotes(preNotebookId)
+				notebookService.ReCountNotebookNumberNotes(userId, notebookId, preNotebookId)
+			} else { // recount notebooks' notes number
+				notebookService.ReCountNotebookNumberNotes(userId, notebookId)
 			}
 		}
 
@@ -750,7 +753,7 @@ func (this *NoteService) CopyNote(noteId, notebookId, userId string) info.Note {
 		isBlog := this.updateToNotebookBlog(note.NoteId.Hex(), notebookId, userId)
 
 		// recount
-		notebookService.ReCountNotebookNumberNotes(notebookId)
+		notebookService.ReCountNotebookNumberNotes(userId, notebookId)
 
 		note.IsBlog = isBlog
 
@@ -798,7 +801,7 @@ func (this *NoteService) CopySharedNote(noteId, notebookId, fromUserId, myUserId
 		isBlog := this.updateToNotebookBlog(note.NoteId.Hex(), notebookId, myUserId)
 
 		// recount
-		notebookService.ReCountNotebookNumberNotes(notebookId)
+		notebookService.ReCountNotebookNumberNotes(myUserId, notebookId)
 
 		note.IsBlog = isBlog
 		return note
@@ -818,7 +821,7 @@ func (this *NoteService) GetNotebookId(noteId string) bson.ObjectId {
 	return note.NotebookId
 }
 
-//------------------
+// ------------------
 // 搜索Note, 博客使用了
 func (this *NoteService) SearchNote(key, userId string, pageNumber, pageSize int, sortField string, isAsc, isBlog bool) (count int, notes []info.Note) {
 	notes = []info.Note{}
@@ -843,7 +846,7 @@ func (this *NoteService) SearchNote(key, userId string, pageNumber, pageSize int
 	// 总记录数
 	count, _ = q.Count()
 
-	q.Sort(sortFieldR).
+	q.Sort(sortFieldR...).
 		Skip(skipNum).
 		Limit(pageSize).
 		All(&notes)
@@ -856,7 +859,7 @@ func (this *NoteService) SearchNote(key, userId string, pageNumber, pageSize int
 }
 
 // 搜索noteContents, 补集pageSize个
-func (this *NoteService) searchNoteFromContent(notes []info.Note, userId, key string, pageSize int, sortField string, isBlog bool) []info.Note {
+func (this *NoteService) searchNoteFromContent(notes []info.Note, userId, key string, pageSize int, sortField []string, isBlog bool) []info.Note {
 	var remain = pageSize - len(notes)
 	noteIds := make([]bson.ObjectId, len(notes))
 	for i, note := range notes {
@@ -873,7 +876,7 @@ func (this *NoteService) searchNoteFromContent(notes []info.Note, userId, key st
 	}
 	db.NoteContents.
 		Find(query).
-		Sort(sortField).
+		Sort(sortField...).
 		Limit(remain).
 		Select(bson.M{"_id": true}).
 		All(&noteContents)
@@ -902,7 +905,7 @@ func (this *NoteService) searchNoteFromContent(notes []info.Note, userId, key st
 	return notes
 }
 
-//----------------
+// ----------------
 // tag搜索
 func (this *NoteService) SearchNoteByTags(tags []string, userId string, pageNumber, pageSize int, sortField string, isAsc bool) (count int, notes []info.Note) {
 	notes = []info.Note{}
@@ -918,14 +921,14 @@ func (this *NoteService) SearchNoteByTags(tags []string, userId string, pageNumb
 	// 总记录数
 	count, _ = q.Count()
 
-	q.Sort(sortFieldR).
+	q.Sort(sortFieldR...).
 		Skip(skipNum).
 		Limit(pageSize).
 		All(&notes)
 	return
 }
 
-//------------
+// ------------
 // 统计
 func (this *NoteService) CountNote(userId string) int {
 	q := bson.M{"IsTrash": false, "IsDeleted": false}
@@ -1079,7 +1082,7 @@ func (this *NoteService) FixContent(content string, isMarkdown bool) string {
 	patterns := []map[string]string{
 		map[string]string{"src": "src", "middle": "/api/file/getImage", "param": "fileId", "to": "getImage?fileId="},
 		map[string]string{"src": "src", "middle": "/file/outputImage", "param": "fileId", "to": "getImage?fileId="},
-		
+
 		map[string]string{"src": "href", "middle": "/attach/download", "param": "attachId", "to": "getAttach?fileId="},
 		map[string]string{"src": "href", "middle": "/api/file/getAtach", "param": "fileId", "to": "getAttach?fileId="},
 

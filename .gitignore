@@ -1,9 +1,12 @@
+.vscode
+*.code-workspace
 test-results/
 tmp/
 routes/
 /none
 /src
 pkg
+/bin
 bin2
 bin/i18n
 bin/leanote*
@@ -11,7 +14,9 @@ bin/release
 bin/test.sh
 bin/tmp
 bin/test
+/build
 public/upload
+public/blog
 app/routes/routes.go
 app/tmp/main.go
 .DS_Store
@@ -25,3 +30,4 @@ files/
 target/
 package/leanote.tar.gz
 package/leanote/
+leanote.log
