@@ -562,7 +562,7 @@ listStr=addAnchors(listStr);listStr=listStr.replace(/\n{2,}(?=\\x03)/,"\n");list
 
 	        if(sequenceElems.length > 0 || flowElems.length > 0) {
 	        	if(!_loadUmlJs) {
-		        	loadJs('http://leanote.com/public/libs/md2html/uml.js', function() {
+		        	loadJs('/public/libs/md2html/uml.js', function() {
 		        		_loadUmlJs = true;
 		                convert();
 		            }); 
@@ -614,8 +614,7 @@ listStr=addAnchors(listStr);listStr=listStr.replace(/\n{2,}(?=\\x03)/,"\n");list
 		// 表示有mathjax?
 		// 加载mathJax
 		if(mdText.indexOf('$') !== -1) {
-			// loadJs("http://leanote.com/public/libs/MathJax/MathJax.js?config=TeX-AMS_HTML", function() {
-			loadJs("https://cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS_HTML", function() {
+			loadJs("/public/libs/MathJax/MathJax.js?config=TeX-AMS_HTML", function() {
 				if(!m) {
 					var m = initMathJax();
 				}
