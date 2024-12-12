@@ -111,6 +111,9 @@ $> yarn gulp
     user1. username: `admin`, password: `abc123`    (管理员, 只有该用户才有权管理后台, 请及时修改密码)  
     user2. username: `demo@leanote.com`,    password: `demo@leanote.com` (仅供体验使用)
 
+    创建session数据过期索引
+    > db.sessions.createIndex({"UpdatedTime": 1}, {expireAfterSeconds: 86400})
+
 2. 配置leanote
 
     leanote的配置存储在文件 `conf/app.conf` 中。
