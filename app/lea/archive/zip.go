@@ -39,6 +39,7 @@ func Zip(srcDirPath string, destFilePath string) (ok bool) {
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
 	fi, err := f.Stat()
 	if err != nil {
 		panic(err)
@@ -141,11 +142,11 @@ func Unzip(srcFilePath string, destDirPath string) (ok bool, msg string) {
 
 	os.Mkdir(destDirPath, os.ModePerm)
 	r, err := zip.OpenReader(srcFilePath)
-	defer r.Close()
 	if err != nil {
 		fmt.Println("zip Open Reader ", err)
 		panic(err)
 	}
+	defer r.Close()
 	for _, f := range r.File {
 		// 包含恶意目录
 		if strings.Contains(f.Name, "../") {
